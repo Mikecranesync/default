@@ -1,0 +1,63 @@
+﻿# Ranger Shared Config for Mikecranesync repos
+# All repos extend this via: _extends: Mikecranesync/default
+# Docs: https://reporanger.com/docs
+
+default:
+  close:
+    delay: "7 days"
+    comment: "⚠️ This has been marked $LABEL and will be closed in $DELAY. Remove the label to cancel."
+
+labels:
+  # Auto-close labels
+  duplicate:
+    action: close
+    delay: "3 days"
+    comment: "Duplicate issue — closing in $DELAY."
+  wontfix:
+    action: close
+    delay: "7 days"
+    comment: "Won't fix — closing in $DELAY. Reopen if you disagree."
+  invalid:
+    action: close
+    delay: "3 days"
+    comment: "Invalid — closing in $DELAY."
+  stale:
+    action: close
+    delay: "14 days"
+    comment: "This issue has been inactive. Closing in $DELAY. Comment to keep open."
+
+  # Auto-merge labels
+  "merge when passing":
+    action: merge
+  "squash when passing":
+    action: merge
+  approved:
+    action: merge
+
+  # Contributor welcome
+  "new contributor":
+    action: comment
+    delay: "5s"
+    message: "Thanks for your first contribution @$AUTHOR! 🎉 A maintainer will review shortly."
+
+# Auto-cleanup after merge
+merges:
+  - action: delete_branch
+  - action: tag
+
+# Delete junk comments
+comments:
+  - action: delete_comment
+    pattern: "+1"
+  - action: delete_comment
+    pattern: $PROFANITY
+  # Auto-label duplicates from maintainer comments
+  - action: label
+    pattern: /duplicate of/i
+    labels:
+      - duplicate
+
+# Lock threads after close
+closes:
+  - action: lock
+    delay: "30 days"
